@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FlynnNotesBlog.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -34,6 +35,9 @@ namespace FlynnNotesBlog.Models
         [DataType(DataType.Date)]
         [Display(Name = "Update Date")]
         public DateTime? Updated { get; set; }
+
+        //public bool IsReady { get; set; }
+        public ReadyStatus ReadyStatus { get; set; }
 
         public string Slug { get; set; }
 
