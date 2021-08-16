@@ -1,10 +1,10 @@
 ﻿using System;
 namespace FlynnNotesBlog.Enums
 {
-    public class ReadyStatus
+    public enum ReadyStatus
     {
-        public ReadyStatus()
-        {
-        }
+        Incomplete,
+        ProductionReady,
+        PreviewReady
     }
 }
