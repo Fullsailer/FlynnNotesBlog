@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace FlynnNotesBlog.Models
 {
@@ -40,5 +42,11 @@ namespace FlynnNotesBlog.Models
 
         [NotMapped]
         public IFormFile Image { get; set; }
+
+        //Navigation Property
+        public virtual Blog Blog { get; set; }
+        public virtual IdentityUser Author{ get; set; }
+
+        public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
     }
 }
