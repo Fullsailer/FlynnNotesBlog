@@ -25,6 +25,7 @@
     <None Remove="Enums\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\Migrations\" />
     <Folder Include="Enums\" />
   </ItemGroup>
 </Project>
