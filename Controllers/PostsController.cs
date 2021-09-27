@@ -69,6 +69,19 @@ namespace FlynnNotesBlog.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            foreach (var tag in TagValues)
+            {
+                _context.Add(new Tag()
+                {
+                    PostId = post.Id,
+                    AuthorId = authorId,
+                    Text = tag
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
             return View(post);
         }
