@@ -70,15 +70,15 @@ namespace FlynnNotesBlog.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            foreach (var tag in TagValues)
-            {
-                _context.Add(new Tag()
-                {
-                    PostId = post.Id,
-                    AuthorId = authorId,
-                    Text = tag
-                });
-            }
+            //foreach (var tag in TagValues)
+            //{
+            //    _context.Add(new Tag()
+            //    {
+            //        PostId = post.Id,
+            //        AuthorId = authorId,
+            //        Text = tag
+            //    });
+            //}
 
             await _context.SaveChangesAsync();
 
