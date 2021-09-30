@@ -1,5 +1,6 @@
 using FlynnNotesBlog.Data;
 using FlynnNotesBlog.Models;
+using FlynnNotesBlog.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -43,6 +44,12 @@ namespace FlynnNotesBlog
             services.AddControllersWithViews();
 
             services.AddRazorPages();
+
+            //Register my custom DataService class
+            services.AddScoped<DataService>();
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

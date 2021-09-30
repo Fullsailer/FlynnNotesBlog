@@ -1,4 +1,5 @@
 using FlynnNotesBlog.Data;
+using FlynnNotesBlog.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,15 @@ namespace FlynnNotesBlog
 
         public static async Task Main(string[] args)
         {
+            
             var host = CreateHostBuilder(args).Build();
+
+            //Pull out my registered DataService
+            var dataService = host.Services
+                                  .CreateScope().ServiceProvider
+                                  .GetRequiredService<DataService>();
+
+            await dataService.ManageDataAsync();
 
             var dbContext = host.Services
                                 .CreateScope().ServiceProvider
