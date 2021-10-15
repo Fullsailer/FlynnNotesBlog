@@ -1,6 +1,7 @@
 using FlynnNotesBlog.Data;
 using FlynnNotesBlog.Models;
 using FlynnNotesBlog.Services;
+using FlynnNotesBlog.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -48,7 +49,9 @@ namespace FlynnNotesBlog
             //Register my custom DataService class
             services.AddScoped<DataService>();
 
-
+            //Register preconfigured instance of MailSettings class.
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddScoped<IBlogEmailSender, EmailService>();
 
         }
 
