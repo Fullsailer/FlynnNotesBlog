@@ -9,6 +9,7 @@ using FlynnNotesBlog.Data;
 using FlynnNotesBlog.Models;
 using FlynnNotesBlog.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlynnNotesBlog.Controllers
 {
@@ -52,6 +53,7 @@ namespace FlynnNotesBlog.Controllers
         }
 
         // GET: Blogs/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -67,7 +69,9 @@ namespace FlynnNotesBlog.Controllers
             if (ModelState.IsValid)
             {
                 blog.Created = DateTime.Now;
-                blog.AuthorId =
+                blog.AuthorId = _userManager.GetUserId(User);
+                blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
+                blog.ContentType = _imageService.ContentType(blog.Image);
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
