@@ -56,5 +56,17 @@
 </div>
 
 @section Scripts {
+
+    <script>
+        //Default font size but not for placeholder...
+        $('#Content').summernote({
+            placeholder: "Post Body",
+            height: 300,       // set editor height
+            minHeight: null,   // set minimum height of editor
+            maxHeight: null,   // set maximum height of editor
+            focus: true        // set focus to editable area after initializing summernote
+        });
+    </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
