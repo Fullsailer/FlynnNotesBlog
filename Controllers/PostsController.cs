@@ -46,6 +46,7 @@ namespace FlynnNotesBlog.Controllers
             var post = await _context.Posts
                 .Include(p => p.Author)
                 .Include(p => p.Blog)
+                .Include(p => p.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
