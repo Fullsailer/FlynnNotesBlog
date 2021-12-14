@@ -9,6 +9,7 @@ using FlynnNotesBlog.Data;
 using FlynnNotesBlog.Models;
 using FlynnNotesBlog.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace FlynnNotesBlog.Controllers
 {
@@ -17,12 +18,14 @@ namespace FlynnNotesBlog.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ISlugService _slugService;
         private readonly IImageService _imageService;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService)
+        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService, UserManager<BlogUser> userManager)
         {
             _context = context;
             _slugService = slugService;
             _imageService = imageService;
+            _userManager = userManager;
         }
 
         // GET: Posts
@@ -55,8 +58,9 @@ namespace FlynnNotesBlog.Controllers
         // GET: Posts/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+     
             return View();
         }
 
@@ -70,6 +74,9 @@ namespace FlynnNotesBlog.Controllers
             if (ModelState.IsValid)
             {
                 post.Created = DateTime.Now;
+                
+                var authorId = _userManager.GetUserId(User);
+                post.AuthorId = authorId;
 
                 // Use the _imageService to store the incoming user specified image
                 post.ImageData = await _imageService.EncodeImageAsync(post.Image);
@@ -88,20 +95,20 @@ namespace FlynnNotesBlog.Controllers
 
                 _context.Add(post);
                 await _context.SaveChangesAsync();
+
+                foreach (var tagText in tagValues)
+                {
+                    _context.Add(new Tag()
+                    {
+                        PostId = post.Id,
+                        AuthorId = authorId,
+                        Text = tagText
+                    });
+                }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            //foreach (var tag in TagValues)
-            //{
-            //    _context.Add(new Tag()
-            //    {
-            //        PostId = post.Id,
-            //        AuthorId = authorId,
-            //        Text = tag
-            //    });
-            //}
-
-            await _context.SaveChangesAsync();
 
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
             return View(post);
