@@ -36,18 +36,38 @@ namespace FlynnNotesBlog.Controllers
         }
 
         // GET: Posts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var post = await _context.Posts
+        //        .Include(p => p.Author)
+        //        .Include(p => p.Blog)
+        //        .Include(p => p.Tags)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (post == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(post);
+        //}
+
+        public async Task<IActionResult> Details(string slug)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
 
             var post = await _context.Posts
-                .Include(p => p.Author)
                 .Include(p => p.Blog)
+                .Include(p => p.Author)
                 .Include(p => p.Tags)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
                 return NotFound();
@@ -55,6 +75,7 @@ namespace FlynnNotesBlog.Controllers
 
             return View(post);
         }
+
 
         // GET: Posts/Create
         public IActionResult Create()
@@ -85,9 +106,31 @@ namespace FlynnNotesBlog.Controllers
 
                 //Create the slug and determine if it is unique
                 var slug = _slugService.UrlFriendly(post.Title);
-                if(!_slugService.IsUnique(slug))
+
+                //Create a variable to store whether an error has occurred
+                var validationError = false;
+
+                if (string.IsNullOrEmpty(slug))
                 {
+                    validationError = true;
+                    ModelState.AddModelError("", "The Title you provided cannot be used as it results in a empty slug.");
+                }
+
+                else if (!_slugService.IsUnique(slug))
+                {
+                    validationError = true;
                     ModelState.AddModelError("Title", "The Title you provided cannot be used as it results in a duplicate slug.");
+                }
+
+                //else if(slug.Contains("test"))
+                //{
+                //    validationError = true;
+                //    ModelState.AddModelError("", "Uh-oh are you testing again???");
+                //    ModelState.AddModelError("Title", "The Title you provided cannot contain the word test.");
+                //}
+
+                if(validationError)
+                {
                     ViewData["TagValues"] = string.Join(",", tagValues);
                     return View(post);
                 }
@@ -116,14 +159,16 @@ namespace FlynnNotesBlog.Controllers
         }
 
         // GET: Posts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string slug)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
 
-            var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _context.Posts.
+                Include(p => p.Tags).
+                FirstOrDefaultAsync(p => p.Slug == slug);
             
             if (post == null)
             {
@@ -200,9 +245,9 @@ namespace FlynnNotesBlog.Controllers
         }
 
         // GET: Posts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string slug)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
@@ -210,7 +255,7 @@ namespace FlynnNotesBlog.Controllers
             var post = await _context.Posts
                 .Include(p => p.Author)
                 .Include(p => p.Blog)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
                 return NotFound();
