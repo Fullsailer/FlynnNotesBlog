@@ -48,6 +48,7 @@ namespace FlynnNotesBlog
 
             //Register my custom DataService class
             services.AddScoped<DataService>();
+            services.AddScoped<BlogSearchService>();
 
             //Register preconfigured instance of MailSettings class.
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
