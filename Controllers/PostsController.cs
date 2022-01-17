@@ -106,6 +106,8 @@ namespace FlynnNotesBlog.Controllers
                 .Include(p => p.Blog)
                 .Include(p => p.Author)
                 .Include(p => p.Tags)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Author)
                 .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
