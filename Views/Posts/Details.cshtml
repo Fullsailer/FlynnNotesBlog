@@ -39,11 +39,13 @@
 
 
 <!-- Displaying Comments related to this Post -->
+
 <div>
-    @if(User.Identity.IsAuthenticated)
+    @if (User.Identity.IsAuthenticated)
     {
         <form asp-action="Create" asp-controller="Comments" method="post">
             @Html.Hidden("PostId", Model.Id)
+
 
             <div class="from-group">
                 <label class="h2 custom-control-label font-weight-bold">Add Comment</label>
