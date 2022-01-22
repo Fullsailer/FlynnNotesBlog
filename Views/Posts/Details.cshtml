@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using FlynnNotesBlog.Services
 @using Newtonsoft.Json
+@using FlynnNotesBlog.Enums
 
 @model FlynnNotesBlog.Models.Post
 
@@ -86,8 +87,32 @@
         <div class="media-body">
             <h4>@comment.Author.FullName</h4>
             <small>
-            <i>Posted on @comment.Created.ToString("MMM dd, yyyy")</i></small>
-            <p>@comment.Body</p>
+                <i>
+                    @if (comment.Moderated is not null)
+                    {
+                        <span class="small">
+                            <span class="font-weight-bolder">
+                                Moderated <span class="text-danger font-italic">(@comment.ModerationType.ToString().ToLower())</span>
+                            </span>
+                            : @comment.Created.ToString("MMM dd, yyyy")
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="small font-italic">Posted : @comment.Created.ToString("MMM dd, yyyy")</span>
+                    }
+                 </i>
+             </small>
+                
+            
+            @* Review this later in Comments Moderating Part 4?
+                @if (string.IsNullOrEmpty(comment.Body))
+            else if (comment.Moderated is not null)
+                    { 
+                        <p>@comment.ModeratedBody</p>
+                    }
+            else if (comment.Deleted is null)*@
+            
 
             @************************************
                 Section 1: RENDER THE EDIT BUTTON
