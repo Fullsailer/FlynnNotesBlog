@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using FlynnNotesBlog.Enums;
 using X.PagedList;
+using FlynnNotesBlog.ViewModels;
 
 namespace FlynnNotesBlog.Controllers
 {
@@ -95,28 +96,58 @@ namespace FlynnNotesBlog.Controllers
 
         }
 
+        //public async Task<IActionResult> Details(string slug)
+        //{
+        //    if (string.IsNullOrEmpty(slug))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var post = await _context.Posts
+        //        .Include(p => p.Blog)
+        //        .Include(p => p.Author)
+        //        .Include(p => p.Tags)
+        //        .Include(p => p.Comments)
+        //        .ThenInclude(c => c.Author)
+        //        .FirstOrDefaultAsync(m => m.Slug == slug);
+        //    if (post == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(post);
+        //}
+
         public async Task<IActionResult> Details(string slug)
         {
-            if (string.IsNullOrEmpty(slug))
-            {
-                return NotFound();
-            }
-
+            ViewData["Title"] = "Post Details Page";
+            if (string.IsNullOrEmpty(slug)) return NotFound();
+            
             var post = await _context.Posts
-                .Include(p => p.Blog)
                 .Include(p => p.Author)
                 .Include(p => p.Tags)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.Author)
+                .Include(p => p.Comments)
+                .ThenInclude(p => p.Moderator)
                 .FirstOrDefaultAsync(m => m.Slug == slug);
-            if (post == null)
+            
+            if (post == null) return NotFound();
+
+            var dataVM = new PostDetailViewModel()
             {
-                return NotFound();
-            }
+                Post = post,
+                Tags = _context.Tags
+                    .Select(t => t.Text.ToLower())
+                    .Distinct().ToList()
+            };
 
-            return View(post);
+            ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            ViewData["MainText"] = post.Title;
+            ViewData["SubText"] = post.Abstract;
+
+            return View(dataVM);
         }
-
 
         // GET: Posts/Create
         public IActionResult Create()
